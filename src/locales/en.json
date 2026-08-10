@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "MyHealthLog",
+    "tagline": "Your records, one place"
+  },
+  "sidebar": {
+    "timeline": "Timeline",
+    "upload": "Upload report",
+    "summaries": "Shared summaries",
+    "family": "Family",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "auth": {
+    "login": "Log in",
+    "loggingIn": "Logging in...",
+    "signup": "Sign up",
+    "signingUp": "Creating account...",
+    "createAccount": "Create your account",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordHint": "At least 6 characters",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "confirmEmailNotice": "Check your email to confirm your account, then log in.",
+    "passwordMismatch": "Passwords don't match",
+    "passwordTooShort": "Password must be at least 6 characters"
+  },
+  "timeline": {
+    "title": "Your timeline",
+    "reportCount": "{{count}} reports across {{categories}} categories",
+    "createSummary": "Create summary",
+    "loading": "Loading...",
+    "loadingReports": "Loading your reports...",
+    "noReportsYet": "No reports yet —",
+    "uploadFirst": "upload your first one",
+    "noReportsInCategory": "No reports in this category yet.",
+    "filters": {
+      "all": "All"
+    }
+  },
+  "categories": {
+    "bloodwork": "Bloodwork",
+    "imaging": "Imaging",
+    "prescription": "Prescription",
+    "visit": "Visit summary"
+  },
+  "upload": {
+    "title": "Add a report",
+    "subtitle": "Upload a file and fill in a few details — you can edit this later.",
+    "chooseFile": "Click to choose a file, or drag one here",
+    "reportTitle": "Report title",
+    "reportTitlePlaceholder": "e.g. Complete blood count",
+    "category": "Category",
+    "provider": "Provider",
+    "providerPlaceholder": "Dr. name",
+    "date": "Date",
+    "facility": "Facility (optional)",
+    "facilityPlaceholder": "e.g. City Diagnostics",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "Anything worth remembering about this report",
+    "save": "Save report",
+    "saving": "Saving..."
+  },
+  "summary": {
+    "title": "Create a summary to share",
+    "subtitle": "Pick the reports a new doctor should see. You'll get a link that expires automatically in {{days}} days.",
+    "loading": "Loading your reports...",
+    "noReports": "You don't have any reports to share yet.",
+    "generate": "Generate shareable link ({{count}} selected)",
+    "generating": "Generating...",
+    "created": "Summary link created",
+    "expiresIn": "Expires in {{days}} days · {{count}} reports included"
+  },
+  "shared": {
+    "heading": "Shared medical summary",
+    "via": "via MyHealthLog",
+    "loading": "Loading...",
+    "notFound": "This link has expired, been revoked, or never existed.",
+    "genericError": "Something went wrong loading this summary.",
+    "unknownProvider": "Unknown provider"
+  },
+  "placeholder": {
+    "notBuilt": "This screen isn't built yet — a good next piece to add.",
+    "reportDetail": "Report detail",
+    "family": "Family profiles",
+    "settingsTitle": "Settings"
+  },
+  "language": {
+    "label": "Language"
+  }
+}
