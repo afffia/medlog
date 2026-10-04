@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "MyHealthLog",
+    "name": "আমার স্বাস্থ্য রেকর্ড" ,
     "tagline": "আপনার সব রিপোর্ট, এক জায়গায়"
   },
   "sidebar": {
@@ -29,6 +29,7 @@
   },
   "timeline": {
     "title": "আপনার টাইমলাইন",
+    "detailTitle": "রিপোর্টের বিস্তারিত",
     "reportCount": "{{categories}}টি ক্যাটাগরিতে {{count}}টি রিপোর্ট",
     "createSummary": "সারাংশ তৈরি করুন",
     "loading": "লোড হচ্ছে...",
@@ -36,6 +37,21 @@
     "noReportsYet": "এখনও কোনো রিপোর্ট নেই —",
     "uploadFirst": "আপনার প্রথম রিপোর্ট আপলোড করুন",
     "noReportsInCategory": "এই ক্যাটাগরিতে এখনও কোনো রিপোর্ট নেই।",
+    "reportFiles": "রিপোর্ট ফাইল",
+    "pdfViewer": "পিডিএফ ভিউয়ার",
+    "editFolder": "ফোল্ডার এডিট করুন",
+    "editFolderDesc": "ফোল্ডারের নাম বা রঙ পরিবর্তন করুন",
+    "folderNameLabel": "ফোল্ডারের নাম",
+    "folderColorLabel": "ফোল্ডারের রঙ",
+    "colorHint": "আপনি শুধু এই ডিফল্ট রঙগুলো থেকে বেছে নিতে পারেন",
+    "filePathNotFound": "ফাইল পাথ পাওয়া যায়নি",
+    "fileLoadError": "ফাইল লোড করা যায়নি",
+    "invalidColor": "একটি বৈধ রঙ নির্বাচন করুন",
+    "folderNameRequired": "ফোল্ডারের নাম আবশ্যক",
+    "updateFailed": "আপডেট ব্যর্থ হয়েছে",
+    "confirmDeleteGroup": "আপনি কি এই রিপোর্ট গ্রুপটি মুছতে চান?",
+    "confirmDeleteFile": "আপনি কি এই ফাইলটি মুছতে চান?",
+    "noFiles": "কোনো ফাইল পাওয়া যায়নি",
     "filters": {
       "all": "সব"
     }
@@ -43,7 +59,7 @@
   "categories": {
     "bloodwork": "রক্ত পরীক্ষা",
     "imaging": "ইমেজিং",
-    "prescription": "প্রেসক্রিপশন",
+    "prescription": "চিকিৎসকের ব্যবস্থাপত্র",
     "visit": "ভিজিট সারাংশ"
   },
   "upload": {
@@ -86,6 +102,20 @@
     "reportDetail": "রিপোর্টের বিস্তারিত",
     "family": "পরিবারের প্রোফাইল",
     "settingsTitle": "সেটিংস"
+  },
+  "common": {
+    "edit": "এডিট",
+    "remove": "রিমুভ",
+    "file": "ফাইল",
+    "files": "ফাইল",
+    "saveChanges": "পরিবর্তন সেভ করুন",
+    "cancel": "বাতিল",
+    "delete": "মুছুন",
+     "locale": "bn-BD"
+  },
+  "reportCard": {
+    "untitled": "শিরোনামহীন রিপোর্ট",
+    "open": "খুলুন"
   },
   "language": {
     "label": "ভাষা"
