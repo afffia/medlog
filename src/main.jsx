@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { SettingsProvider } from './context/SettingsContext.jsx'
+import { ReminderProvider } from './context/ReminderContext.jsx'
 import App from './App.jsx'
 import './i18n.js'
 import './index.css'
@@ -10,7 +12,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <SettingsProvider>
+          <ReminderProvider>
+            <App />
+          </ReminderProvider>
+        </SettingsProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

@@ -539,6 +539,9 @@ export default function Timeline() {
                     </div>
                   </button>
 
+                  <Link to={`/reports/${file.id}`} className="shrink-0 px-2 py-1 text-sm font-medium text-teal hover:underline">
+                    {t('common.edit')}
+                  </Link>
                   <button
                     type="button"
                     onClick={(event) => {

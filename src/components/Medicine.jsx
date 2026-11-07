@@ -9,7 +9,7 @@ export default function Medicines({ profile, onChange }) {
   const { user } = useAuth()
   const [medicines, setMedicines] = useState([])
   const [conditions, setConditions] = useState([])
-  const empty = { name: '', dose: '', diseaseId: '', times: ['morning'] }
+  const empty = { name: '', dose: '', diseaseId: '', doctor: '', times: ['morning'] }
   const [f, setF] = useState(empty)
 
   const loadAll = async () => {
@@ -33,7 +33,9 @@ export default function Medicines({ profile, onChange }) {
   const add = async (e) => {
     e.preventDefault()
     if (!f.name.trim() || f.times.length === 0) return
-    const { data, error } = await supabase.from('medicines').insert({ user_id: user.id, profile_id: profile.id, name: f.name.trim(), dosage: f.dose.trim(), condition_id: f.diseaseId || null, times: f.times }).select()
+    const row = { user_id: user.id, profile_id: profile.id, name: f.name.trim(), dosage: f.dose.trim(), condition_id: f.diseaseId || null, times: f.times }
+    if (f.doctor.trim()) row.doctor = f.doctor.trim()
+    const { data, error } = await supabase.from('medicines').insert(row).select()
     if (!error && data) { 
       setMedicines(prev => [...data, ...prev]); 
       setF(empty); 
@@ -71,9 +73,10 @@ export default function Medicines({ profile, onChange }) {
             {conditions.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
           </select>
         </div>
+        <input className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-teal" placeholder={t('medicines.doctorPlaceholder')} value={f.doctor} onChange={(e) => setF({ ...f, doctor: e.target.value })} />
 
         <div>
-          <p className="mb-1.5 text-xs font-medium text-ink/60">{t('medicines.when ToTake')}</p>
+          <p className="mb-1.5 text-xs font-medium text-ink/60">{t('medicines.whenToTake')}</p>
           <div className="flex flex-wrap gap-2">
             {SLOTS.map((s) => (
               <button type="button" key={s.id} onClick={() => toggleTime(s.id)} className={`rounded-full border px-3 py-1 text-sm ${f.times.includes(s.id) ? 'border-teal bg-teal text-white' : 'border-teal/15 bg-white hover:border-teal/30'}`}>
@@ -98,6 +101,7 @@ export default function Medicines({ profile, onChange }) {
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-medium">{m.name} {m.dosage && <span className="font-normal text-ink/60">({m.dosage})</span>}</div>
                   {d && <div className="text-xs text-ink/50">{t('medicines.for')} {d.name}</div>}
+                  {m.doctor && <div className="text-xs text-ink/50">{t('medicines.prescribedBy')} {m.doctor}</div>}
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {SLOTS.filter((s) => (m.times || []).includes(s.id)).map((s) => (
                       <span key={s.id} className="rounded-full bg-teal-light px-2 py-0.5 text-xs text-teal ring-1 ring-teal/20">{timeLabel(s.id, s.label)}</span>

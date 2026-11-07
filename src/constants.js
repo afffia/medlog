@@ -42,3 +42,26 @@ export const cardCls =
 
 export const badgeCls =
   'rounded-full px-3 py-1 text-xs font-medium'
+
+export const DEFAULT_SLOT_TIMES = { morning: '08:00', noon: '14:00', night: '21:00' }
+
+export const DEFAULT_SETTINGS = {
+  display_name: '',
+  med_reminders: true,
+  appt_reminders: true,
+  browser_notifications: false,
+  slot_times: DEFAULT_SLOT_TIMES,
+}
+
+// Minutes before an appointment that the reminder fires
+export const APPT_LEADS = [15, 60, 180, 1440]
+
+// Units are fixed per kind so trend lines never mix units.
+// Blood pressure stores systolic in value and diastolic in value2.
+export const VITAL_KINDS = [
+  { id: 'blood_pressure', unit: 'mmHg', dual: true },
+  { id: 'blood_sugar', unit: 'mmol/L' },
+  { id: 'weight', unit: 'kg' },
+  { id: 'heart_rate', unit: 'bpm' },
+  { id: 'temperature', unit: '°F' },
+]

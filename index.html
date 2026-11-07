@@ -10,7 +10,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&family=Noto+Sans+Bengali:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-  </head>
+    <!-- Browser-side OCR. Uploaded report content is processed in the browser, not sent to an OCR API. -->
+  <script defer src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
