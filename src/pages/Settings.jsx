@@ -5,10 +5,11 @@ import { Bell, Copy, Check, LogOut } from 'lucide-react'
 import { supabase } from '../supabaseClient.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useSettings } from '../context/SettingsContext.jsx'
+import { useReminders } from '../context/ReminderContext.jsx'
 import LanguageSwitcher from '../components/LanguageSwitcher.jsx'
 import { SLOTS, inputCls, btnCls } from '../constants.js'
-import { fmtDate } from '../dates.js'
-import { notifPermission, requestNotifPermission, showNotification } from '../notify.js'
+import { fmtDate, fmtDateTime } from '../dates.js'
+import { isSecurePage, notifPermission, requestNotifPermission, showNotification } from '../notify.js'
 
 function Section({ title, desc, children }) {
   return (
@@ -44,6 +45,7 @@ function Toggle({ checked, onChange, label, desc }) {
 export default function Settings() {
   const { user, signOut } = useAuth()
   const { settings, save, syncError } = useSettings()
+  const { preview } = useReminders()
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
 
@@ -54,6 +56,7 @@ export default function Settings() {
   const [shares, setShares] = useState([])
   const [sharesError, setSharesError] = useState(null)
   const [copiedId, setCopiedId] = useState(null)
+  const [audit, setAudit] = useState(null)   // null until loaded, or if audit_log isn't set up yet
 
   const [pw, setPw] = useState({ next: '', confirm: '' })
   const [pwMsg, setPwMsg] = useState(null) // { ok: bool, text }
@@ -73,6 +76,28 @@ export default function Settings() {
     }
     loadShares()
   }, [user])
+
+  useEffect(() => {
+    async function loadAudit() {
+      if (!user) return
+      const { data, error } = await supabase
+        .from('audit_log')
+        .select('id,table_name,action,row_id,created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(500)
+      if (!error) setAudit(data || [])
+    }
+    loadAudit()
+  }, [user])
+
+  // how many times / when each share link was opened
+  const opens = {}
+  ;(audit || []).forEach((a) => {
+    if (a.table_name !== 'share_view') return
+    if (!opens[a.row_id]) opens[a.row_id] = { count: 0, last: a.created_at }
+    opens[a.row_id].count += 1
+  })
 
   async function saveName(e) {
     e.preventDefault()
@@ -139,7 +164,7 @@ export default function Settings() {
     granted: t('settings.reminders.granted'),
     denied: t('settings.reminders.denied'),
     default: t('settings.reminders.notAsked'),
-    unsupported: t('settings.reminders.unsupported'),
+    unsupported: isSecurePage() ? t('settings.reminders.unsupported') : t('settings.reminders.needsSecure'),
   }[perm]
 
   return (
@@ -206,6 +231,12 @@ export default function Settings() {
               </div>
             </div>
 
+            <div>
+              <button type="button" onClick={preview} className="rounded-lg border border-line bg-white px-3 py-1.5 text-xs font-medium hover:border-teal/50">
+                {t('settings.reminders.preview')}
+              </button>
+            </div>
+
             <div className="rounded-xl border border-line bg-canvas p-4">
               <div className="flex items-center gap-2">
                 <Bell size={16} className="text-teal-dark" />
@@ -255,6 +286,13 @@ export default function Settings() {
                         <span className="text-xs text-ink/60">{t('settings.privacy.reports', { count: s.report_ids?.length || 0 })}</span>
                       </div>
                       <p className="mt-1 text-xs text-ink/40">{t('settings.privacy.expires', { date: fmtDate(s.expires_at, i18n.language) })}</p>
+                      {audit && (
+                        <p className="mt-0.5 text-xs text-ink/40">
+                          {opens[s.id]
+                            ? t('settings.privacy.opened', { count: opens[s.id].count, date: fmtDateTime(opens[s.id].last, i18n.language) })
+                            : t('settings.privacy.neverOpened')}
+                        </p>
+                      )}
                     </div>
                     {st === 'active' && (
                       <div className="flex gap-2">
@@ -273,6 +311,23 @@ export default function Settings() {
             </ul>
           )}
         </Section>
+
+        {audit && (
+          <Section title={t('settings.activity.title')} desc={t('settings.activity.desc')}>
+            {audit.length === 0 ? (
+              <p className="text-sm text-ink/50">{t('settings.activity.empty')}</p>
+            ) : (
+              <ul className="divide-y divide-line">
+                {audit.slice(0, 15).map((a) => (
+                  <li key={a.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                    <span>{t(`settings.activity.${a.table_name}.${a.action}`, { defaultValue: `${a.table_name} ${a.action}` })}</span>
+                    <span className="shrink-0 text-xs text-ink/40">{fmtDateTime(a.created_at, i18n.language)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Section>
+        )}
 
         <Section title={t('settings.account.title')}>
           <form onSubmit={changePassword} className="flex flex-col gap-3">

@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "MyHealthLog",
@@ -10,7 +9,10 @@
     "summaries": "Shared summaries",
     "family": "Family",
     "settings": "Settings",
-    "logout": "Log out"
+    "logout": "Log out",
+    "folders": "Folders",
+    "providers": "Doctors",
+    "appointments": "Appointments"
   },
   "auth": {
     "login": "Log in",
@@ -26,7 +28,8 @@
     "haveAccount": "Already have an account?",
     "confirmEmailNotice": "Check your email to confirm your account, then log in.",
     "passwordMismatch": "Passwords don't match",
-    "passwordTooShort": "Password must be at least 6 characters"
+    "passwordTooShort": "Password must be at least 6 characters",
+    "tooManyAttempts": "Too many attempts. Please try again in {{seconds}} seconds."
   },
   "timeline": {
     "title": "Your timeline",
@@ -55,7 +58,11 @@
     "noFiles": "No files found",
     "filters": {
       "all": "All"
-    }
+    },
+    "details": "Details",
+    "personFilter": "Person",
+    "allPeople": "Everyone",
+    "me": "Me"
   },
   "categories": {
     "bloodwork": "Bloodwork",
@@ -78,7 +85,15 @@
     "notes": "Notes (optional)",
     "notesPlaceholder": "Anything worth remembering about this report",
     "save": "Save report",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "scan": "Scan to auto-fill",
+    "scanning": "Reading… {{percent}}%",
+    "scanImagesOnly": "Auto-fill works on photos (JPG or PNG) and PDF files. This file type isn't supported.",
+    "scanFilled": "Filled from the scan: {{fields}}. Please check them before saving.",
+    "scanNothing": "Couldn't read any details from this image. Please fill them in yourself.",
+    "scanFailed": "Scanning failed (it needs an internet connection the first time). You can still fill the details in yourself.",
+    "forWhom": "For",
+    "myself": "Me"
   },
   "summary": {
     "title": "Create a summary to share",
@@ -99,7 +114,7 @@
     "unknownProvider": "Unknown provider"
   },
   "family": {
-     "title": "Family Profiles",
+    "title": "Family Profiles",
     "subtitle": "Manage your family members' health",
     "addProfile": "Add profile",
     "editProfile": "Edit Profile",
@@ -119,34 +134,39 @@
     "changePhoto": "Change photo",
     "viewDetails": "View profile",
     "create": "Save profile",
-    "deleteConfirm": "Do you want to delete this profile?"
+    "deleteConfirm": "Do you want to delete this profile?",
+    "notFound": "Profile not found."
   },
   "conditions": {
     "title": "Conditions",
     "add": "Add Condition",
     "placeholder": "e.g. Diabetes, Hypertension",
     "empty": "No conditions added",
-    "deleteConfirm": "Do you want to delete this condition?"
+    "deleteConfirm": "Do you want to delete this condition?",
+    "emptyDesc": "Add the conditions this person is being treated for."
   },
   "medicines": {
-  "title": "Daily Medicines",
-  "add": "Add Medicine",
-  "name": "Medicine Name",
-  "namePlaceholder": "e.g. Napa, Seclo",
-  "dose": "Dose",
-  "dosePlaceholder": "e.g. 1 tablet, 10mg",
-  "conditionLink": "For condition",
-  "forWhich": "For which condition?",
-  "when ToTake": "When to eat",
-  "schedule": "Schedule",
-  "morning": "Morning",
-  "night": "Night",
-  "noon": "Noon",
-  "empty": "No medicines added",
-  "deleteConfirm": "Do you want to delete this medicine?",
-  "for": "for"
-},
-
+    "title": "Daily Medicines",
+    "add": "Add Medicine",
+    "name": "Medicine Name",
+    "namePlaceholder": "e.g. Napa, Seclo",
+    "dose": "Dose",
+    "dosePlaceholder": "e.g. 1 tablet, 10mg",
+    "conditionLink": "For condition",
+    "forWhich": "For which condition?",
+    "schedule": "Schedule",
+    "morning": "Morning",
+    "night": "Night",
+    "noon": "Noon",
+    "empty": "No medicines added",
+    "deleteConfirm": "Do you want to delete this medicine?",
+    "for": "for",
+    "whenToTake": "When to take",
+    "doctorPlaceholder": "Prescribed by (doctor, optional)",
+    "prescribedBy": "Prescribed by",
+    "reminderHint": "You'll be reminded at the times shown.",
+    "changeTimes": "Change times"
+  },
   "today": {
     "title": "Today's Medicines",
     "subtitle": "Medicines for {{date}}",
@@ -155,7 +175,8 @@
     "allDone": "All medicines taken! ",
     "progress": "{{taken}}/{{total}} taken",
     "empty": "No medicines for today",
-    "logEmpty": "Add medicines to profile"
+    "logEmpty": "Add medicines to profile",
+    "dueNow": "Due now"
   },
   "placeholder": {
     "notBuilt": "This screen isn't built yet — a good next piece to add.",
@@ -172,11 +193,12 @@
     "savedAt": "Saved",
     "saveChanges": "Save Changes",
     "cancel": "Cancel",
-        "back": "Back",
+    "back": "Back",
     "delete": "Delete",
     "add": "Add",
     "loading": "Loading...",
-    "locale": "en-US"
+    "locale": "en-US",
+    "saving": "Saving..."
   },
   "reportCard": {
     "untitled": "Untitled report",
@@ -184,5 +206,188 @@
   },
   "language": {
     "label": "Language"
+  },
+  "reminders": {
+    "medicineTitle": "Time for {{name}}",
+    "overdue": "Overdue",
+    "markTaken": "Mark taken",
+    "snooze": "Snooze 10 min",
+    "dismiss": "Dismiss",
+    "appointmentTitle": "Appointment: {{title}}",
+    "more": "+{{count}} more reminders",
+    "testTitle": "Sample reminder",
+    "testBody": "This is how a reminder will look."
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your profile, language, reminders and privacy",
+    "syncError": "Couldn't sync settings to the server — they're saved on this device for now.",
+    "profile": {
+      "title": "Profile",
+      "email": "Email",
+      "displayName": "Your name",
+      "displayNamePlaceholder": "What should we call you?",
+      "save": "Save",
+      "saved": "Saved"
+    },
+    "language": {
+      "title": "Language",
+      "desc": "Choose the language for the whole app."
+    },
+    "reminders": {
+      "title": "Reminders",
+      "note": "Reminders appear while MyHealthLog is open in your browser. They can't reach you when it's closed.",
+      "medicine": "Medicine reminders",
+      "medicineDesc": "Remind me when a dose is due and not yet marked as taken.",
+      "appointment": "Appointment reminders",
+      "appointmentDesc": "Remind me before upcoming appointments.",
+      "times": "Dose times",
+      "timesDesc": "When should each part of the day remind you?",
+      "browser": "Browser notifications",
+      "browserDesc": "These are the small pop-ups your browser (Chrome, Edge, Firefox) shows on your screen, even when you're on another tab. Click Allow once when asked.",
+      "enable": "Enable notifications",
+      "test": "Send a test",
+      "testBody": "Notifications are working.",
+      "granted": "Allowed in this browser.",
+      "denied": "Blocked — allow notifications for this site in your browser settings.",
+      "notAsked": "Not enabled yet.",
+      "unsupported": "This browser doesn't support notifications.",
+      "preview": "Preview an in-app reminder",
+      "needsSecure": "Browser notifications only work on secure pages (https:// or localhost), and this page isn't one."
+    },
+    "privacy": {
+      "title": "Privacy & sharing",
+      "desc": "Links you've created. Revoke a link to stop access immediately.",
+      "noLinks": "You haven't created any share links.",
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked",
+      "expires": "Expires {{date}}",
+      "reports": "{{count}} reports",
+      "copy": "Copy link",
+      "copied": "Copied",
+      "revoke": "Revoke",
+      "revokeConfirm": "Revoke this link? Anyone holding it will lose access.",
+      "opened": "Opened {{count}} times · last {{date}}",
+      "neverOpened": "Not opened yet"
+    },
+    "account": {
+      "title": "Account",
+      "changePassword": "Change password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "update": "Update password",
+      "passwordUpdated": "Password updated",
+      "logout": "Log out"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "desc": "Changes to your reports and share links, and when a link was opened.",
+      "empty": "Nothing yet.",
+      "reports": {
+        "INSERT": "Report added",
+        "UPDATE": "Report edited",
+        "DELETE": "Report deleted"
+      },
+      "summary_shares": {
+        "INSERT": "Share link created",
+        "UPDATE": "Share link changed or revoked",
+        "DELETE": "Share link deleted"
+      },
+      "share_view": {
+        "VIEW": "Share link opened"
+      }
+    }
+  },
+  "appointments": {
+    "title": "Appointments",
+    "subtitle": "Never miss a doctor visit. A reminder appears before each one.",
+    "new": "New appointment",
+    "titleLabel": "What is it for?",
+    "titlePlaceholder": "e.g. Cardiology follow-up",
+    "doctor": "Doctor",
+    "doctorPlaceholder": "Dr. name",
+    "facility": "Facility",
+    "facilityPlaceholder": "e.g. Heart & Vascular Center",
+    "date": "Date",
+    "time": "Time",
+    "forWhom": "For",
+    "myself": "Me",
+    "remind": "Remind me",
+    "leads": {
+      "15": "15 minutes before",
+      "60": "1 hour before",
+      "180": "3 hours before",
+      "1440": "1 day before"
+    },
+    "notes": "Notes",
+    "notesPlaceholder": "Things to ask or bring",
+    "save": "Save appointment",
+    "upcoming": "Upcoming",
+    "past": "Past & completed",
+    "noneUpcoming": "No upcoming appointments.",
+    "nonePast": "Nothing here yet.",
+    "markDone": "Mark done",
+    "reopen": "Reopen",
+    "deleteConfirm": "Delete this appointment?",
+    "reminderLine": "Reminder: {{lead}}",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "tableMissing": "Appointments aren't set up in the database yet — run supabase/features_schema.sql."
+  },
+  "reportDetail": {
+    "notFound": "This report couldn't be found.",
+    "uploaded": "Added",
+    "file": "File",
+    "noFile": "No file attached",
+    "open": "Open in new tab",
+    "download": "Download",
+    "previewError": "Couldn't load the file preview.",
+    "delete": "Delete report",
+    "deleteConfirm": "Delete this report and its file? This can't be undone.",
+    "saved": "Changes saved",
+    "noNotes": "No notes"
+  },
+  "folders": {
+    "title": "Folders",
+    "subtitle": "Browse your reports by category or by doctor.",
+    "byCategory": "By category",
+    "byDoctor": "By doctor",
+    "empty": "No reports yet.",
+    "count_one": "{{count}} report",
+    "count_other": "{{count}} reports",
+    "latest": "Latest: {{date}}",
+    "unknownDoctor": "Unknown doctor",
+    "viewDoctor": "View doctor page",
+    "folderEmpty": "No reports in this folder."
+  },
+  "providers": {
+    "title": "Doctors",
+    "subtitle": "Reports, medicines and vitals grouped by treating doctor.",
+    "addPlaceholder": "Add a doctor's name",
+    "empty": "No doctors yet. Add one above, or fill in the provider when you upload a report.",
+    "reports": "Reports",
+    "medicines": "Medicines",
+    "vitals": "Vitals",
+    "noReports": "No reports from this doctor yet.",
+    "noMedicines": "No medicines linked to this doctor. Fill in “Prescribed by” when adding a medicine.",
+    "vitalsTitle": "Vitals & trends",
+    "addReading": "Add reading",
+    "value": "Value",
+    "systolic": "Systolic",
+    "diastolic": "Diastolic",
+    "noReadings": "No readings yet.",
+    "notEnough": "Add at least two readings to see a trend.",
+    "latest": "Latest",
+    "change": "Change since previous",
+    "deleteConfirm": "Delete this reading?",
+    "kinds": {
+      "blood_pressure": "Blood pressure",
+      "blood_sugar": "Blood sugar",
+      "weight": "Weight",
+      "heart_rate": "Heart rate",
+      "temperature": "Temperature"
+    },
+    "tableMissing": "Vitals aren't set up in the database yet — run supabase/features_schema.sql."
   }
 }

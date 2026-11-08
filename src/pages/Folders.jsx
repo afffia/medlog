@@ -42,7 +42,7 @@ export default function Folders() {
       if (!map.has(key)) {
         map.set(key, {
           key,
-          label: by === 'category' ? t(`categories.${key}`, key) : r.provider?.trim() || t('folders.unknownDoctor'),
+          label: by === 'category' ? t(`categories.${key}`, key) : r.provider?.trim() || t('doc'),
           doctorName: by === 'doctor' && r.provider?.trim() ? r.provider.trim() : null,
           items: [],
         })
@@ -78,7 +78,7 @@ export default function Folders() {
         </div>
 
         {open.items.length === 0 ? (
-          <p className="text-sm text-ink/50">{t('folders.folderEmpty')}</p>
+          <p className="text-sm text-ink/50">{t('folder Empty')}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {open.items.map((r) => (
@@ -103,8 +103,8 @@ export default function Folders() {
   return (
     <div className="w-full">
       <header className="mb-6">
-        <h2 className="font-serif text-2xl">{t('folders.title')}</h2>
-        <p className="mt-1 text-sm text-ink/50">{t('folders.subtitle')}</p>
+        <h2 className="font-serif text-2xl">{t('Folders')}</h2>
+        <p className="mt-1 text-sm text-ink/50">{t('view your folders')}</p>
       </header>
 
       <div className="mb-6 flex gap-2">
@@ -117,7 +117,7 @@ export default function Folders() {
               by === k ? 'border-teal-dark bg-teal-dark text-white' : 'border-line text-ink/60 hover:border-teal/50'
             }`}
           >
-            {k === 'category' ? t('folders.byCategory') : t('folders.byDoctor')}
+            {k === 'category' ? t('Categories') : t('Doctors')}
           </button>
         ))}
       </div>
@@ -128,7 +128,7 @@ export default function Folders() {
         <p className="py-16 text-center text-sm text-ink/40">{t('common.loading')}</p>
       ) : folders.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-line p-8 text-center text-sm text-ink/50">
-          {t('folders.empty')}{' '}
+          {t('No folders')}{' '}
           <Link to="/upload" className="font-medium text-teal-dark">{t('timeline.uploadFirst')}</Link>.
         </p>
       ) : (
