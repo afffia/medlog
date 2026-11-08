@@ -9,9 +9,14 @@ import Timeline from './pages/Timeline.jsx'
 import Upload from './pages/Upload.jsx'
 import CreateSummary from './pages/CreateSummary.jsx'
 import SharedSummary from './pages/SharedSummary.jsx'
-import Placeholder from './pages/Placeholder.jsx'
 import Home from './pages/Home.jsx'
 import Detail from './pages/Detail.jsx'
+import Settings from './pages/Settings.jsx'
+import ReportDetail from './pages/ReportDetail.jsx'
+import Appointments from './pages/Appointments.jsx'
+import Folders from './pages/Folders.jsx'
+import Providers from './pages/Providers.jsx'
+import ProviderDetail from './pages/ProviderDetail.jsx'
 import { supabase } from './supabaseClient'
 import { useAuth } from './context/AuthContext'
 
@@ -36,6 +41,7 @@ function DetailWrapper() {
   const removeProfile = async () => {
     if (!confirm(t('family.deleteConfirm', { name: profile?.name }))) return
     
+    await supabase.from('appointments').delete().eq('profile_id', id)
     await supabase.from('today_logs').delete().eq('profile_id', id)
     await supabase.from('medicines').delete().eq('profile_id', id)
     await supabase.from('conditions').delete().eq('profile_id', id)
@@ -85,7 +91,6 @@ function FamilyWrapper() {
 }
 
 export default function App() {
-  const { t } = useTranslation()
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -94,10 +99,14 @@ export default function App() {
       <Route path="/" element={<ProtectedRoute><Layout><Timeline /></Layout></ProtectedRoute>} />
       <Route path="/upload" element={<ProtectedRoute><Layout><Upload /></Layout></ProtectedRoute>} />
       <Route path="/summaries/new" element={<ProtectedRoute><Layout><CreateSummary /></Layout></ProtectedRoute>} />
-      <Route path="/reports/:id" element={<ProtectedRoute><Layout><Placeholder title={t('placeholder.reportDetail')} /></Layout></ProtectedRoute>} />
+      <Route path="/reports/:id" element={<ProtectedRoute><Layout><ReportDetail /></Layout></ProtectedRoute>} />
+      <Route path="/folders" element={<ProtectedRoute><Layout><Folders /></Layout></ProtectedRoute>} />
+      <Route path="/providers" element={<ProtectedRoute><Layout><Providers /></Layout></ProtectedRoute>} />
+      <Route path="/providers/:name" element={<ProtectedRoute><Layout><ProviderDetail /></Layout></ProtectedRoute>} />
+      <Route path="/appointments" element={<ProtectedRoute><Layout><Appointments /></Layout></ProtectedRoute>} />
       <Route path="/family" element={<ProtectedRoute><Layout><FamilyWrapper /></Layout></ProtectedRoute>} />
       <Route path="/family/:id" element={<ProtectedRoute><Layout><DetailWrapper /></Layout></ProtectedRoute>} />
-      <Route path="/settings" element={<ProtectedRoute><Layout><Placeholder title={t('placeholder.settingsTitle')} /></Layout></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
     </Routes>
   )
 }

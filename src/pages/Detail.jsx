@@ -5,6 +5,7 @@ import Avatar from '../components/Avatar'
 import Today from '../components/Today'
 import Conditions from '../components/Conditions'
 import Medicines from '../components/Medicine'
+import { todayKey } from '../constants'
 
 export default function Detail({ profile: initialProfile, onBack, onRemove }) {
   const { t } = useTranslation()
@@ -19,7 +20,7 @@ export default function Detail({ profile: initialProfile, onBack, onRemove }) {
   const loadDetailData = useCallback(async () => {
     if (!initialProfile?.id) return
     setLoading(true)
-    const today = new Date().toISOString().split('T')[0] 
+    const today = todayKey()
     
     const [profileRes, condRes, medRes, logsRes] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', initialProfile.id).single(),
@@ -50,15 +51,8 @@ export default function Detail({ profile: initialProfile, onBack, onRemove }) {
     window.dispatchEvent(new Event('today-logs-updated'))
   }, [loadDetailData])
 
-  const handleDeleteProfile = async () => {
-    if (!confirm(t('family.deleteConfirm', { name: profile.name }))) return
-    const { error } = await supabase.from('profiles').delete().eq('id', profile.id)
-    if (!error) {
-      onRemove()
-    } else {
-      alert(error.message)
-    }
-  }
+  // The parent (DetailWrapper) asks for confirmation and does the deleting
+  const handleDeleteProfile = () => onRemove()
 
   if (loading) {
     return <div className="text-center py-16 text-sm text-ink/40">{t('timeline.loading')}</div>

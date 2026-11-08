@@ -12,8 +12,6 @@ i18n
       en: { translation: en },
       bn: { translation: bn },
     },
-      lng:'bn',
-    
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // React already escapes values, no need to double up

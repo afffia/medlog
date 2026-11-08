@@ -1,8 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Activity, Upload, Share2, Users, Settings, LogOut } from 'lucide-react'
+import { Activity, Upload, Share2, Users, Settings, LogOut, FolderOpen, Stethoscope, CalendarClock } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
-import LanguageSwitcher from './LanguageSwitcher.jsx'
 
 export default function Sidebar() {
   const { user, signOut } = useAuth()
@@ -12,7 +11,10 @@ export default function Sidebar() {
   const links = [
     { to: '/', label: t('sidebar.timeline'), icon: Activity, end: true },
     { to: '/upload', label: t('sidebar.upload'), icon: Upload },
-    { to: '/summaries/new', label: t('sidebar.summaries'), icon: Share2 },
+    { to: '/folders', label: t('Folders'), icon: FolderOpen },
+    { to: '/providers', label: t('Providers'), icon: Stethoscope },
+    { to: '/appointments', label: t('Appointments'), icon: CalendarClock },
+    { to: '/summaries/new', label: t('Summaries'), icon: Share2 },
     { to: '/family', label: t('sidebar.family'), icon: Users },
   ]
 
@@ -27,10 +29,7 @@ export default function Sidebar() {
         <h1 className="font-serif text-lg text-teal-dark">{t('app.name')}</h1>
         <p className="text-xs text-ink/50 mt-0.5 truncate">{user?.email}</p>
       </div>
-      <div className="px-5 pb-4">
-        <LanguageSwitcher />
-      </div>
-      <nav className="flex flex-col gap-1 px-3">
+      <nav className="flex flex-col gap-1 px-3 overflow-y-auto">
         {links.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}

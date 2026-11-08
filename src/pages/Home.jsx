@@ -22,7 +22,7 @@ export default function Home({ profiles, onOpen, onAdd }) {
     async function loadCounts() {
       if (!user?.id || !profiles?.length) return
       const ids = profiles.map(p => p.id)
-      const today = new Date().toISOString().split('T')[0]
+      const today = todayKey()
 
       const [condsRes, medsRes, logsRes] = await Promise.all([
         supabase.from('conditions').select('profile_id').in('profile_id', ids),
