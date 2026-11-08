@@ -11,10 +11,10 @@ export default function Sidebar() {
   const links = [
     { to: '/', label: t('sidebar.timeline'), icon: Activity, end: true },
     { to: '/upload', label: t('sidebar.upload'), icon: Upload },
-    { to: '/folders', label: t('Folders'), icon: FolderOpen },
-    { to: '/providers', label: t('Providers'), icon: Stethoscope },
-    { to: '/appointments', label: t('Appointments'), icon: CalendarClock },
-    { to: '/summaries/new', label: t('Summaries'), icon: Share2 },
+    { to: '/folders', label: t('sidebar.folders'), icon: FolderOpen },
+    { to: '/providers', label: t('sidebar.providers'), icon: Stethoscope },
+    { to: '/appointments', label: t('sidebar.appointments'), icon: CalendarClock },
+    { to: '/summaries/new', label: t('sidebar.summaries'), icon: Share2 },
     { to: '/family', label: t('sidebar.family'), icon: Users },
   ]
 
