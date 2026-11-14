@@ -32,7 +32,9 @@ export const BLOOD = [
 
 export const uid = () => Math.random().toString(36).slice(2, 9)
 
-export const todayKey = () => new Date().toLocaleDateString('en-CA')
+// FIX: Asia/Dhaka add korlam - nahole UTC date niye 0/1 bug hobe
+export const todayKey = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Dhaka' })
+
 export const inputCls =
   'w-full rounded-xl border border-line bg-white px-3 py-2 text-sm text-ink placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-teal/20 focus:border-teal transition-all'
 export const btnCls =
@@ -53,11 +55,9 @@ export const DEFAULT_SETTINGS = {
   slot_times: DEFAULT_SLOT_TIMES,
 }
 
-// Minutes before an appointment that the reminder fires
+
 export const APPT_LEADS = [15, 60, 180, 1440]
 
-// Units are fixed per kind so trend lines never mix units.
-// Blood pressure stores systolic in value and diastolic in value2.
 export const VITAL_KINDS = [
   { id: 'blood_pressure', unit: 'mmHg', dual: true },
   { id: 'blood_sugar', unit: 'mmol/L' },

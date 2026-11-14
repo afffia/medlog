@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { HeartPulse } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
-import LanguageSwitcher from '../components/LanguageSwitcher.jsx'
 
 export default function Login() {
   const { signIn } = useAuth()
@@ -30,10 +29,6 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-canvas px-4">
       <div className="w-full max-w-sm">
-        <div className="flex justify-end mb-4">
-          <LanguageSwitcher />
-        </div>
-
         <div className="flex flex-col items-center mb-8">
           <div className="w-11 h-11 rounded-xl bg-teal-light flex items-center justify-center mb-3">
             <HeartPulse size={22} className="text-teal-dark" strokeWidth={2} />

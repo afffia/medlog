@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Avatar from '../components/Avatar'
-import { BLOOD, todayKey, inputCls, btnCls } from '../constants'
+import { BLOOD, inputCls, btnCls } from '../constants'
 import { readPhoto } from '../readPhoto'
 import { supabase } from '../supabaseClient.js'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -10,8 +10,9 @@ export default function Home({ profiles, onOpen, onAdd }) {
   const { t } = useTranslation()
   const { user } = useAuth()
   const [adding, setAdding] = useState(false)
-  const [f, setF] = useState({ name: '', age: '', blood: '', photo: '' })
+  const [f, setF] = useState({ name: '', age: '', blood: '', relation: '', photo: '' })
   const [sbCounts, setSbCounts] = useState({})
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (profiles && profiles.length === 0) setAdding(true)
@@ -22,7 +23,9 @@ export default function Home({ profiles, onOpen, onAdd }) {
     async function loadCounts() {
       if (!user?.id || !profiles?.length) return
       const ids = profiles.map(p => p.id)
-      const today = todayKey()
+      
+      // FIX: Eita age chilo toISOString() - UTC bug. Ekhon Dhaka time
+      const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Dhaka' })
 
       const [condsRes, medsRes, logsRes] = await Promise.all([
         supabase.from('conditions').select('profile_id').in('profile_id', ids),
@@ -30,17 +33,20 @@ export default function Home({ profiles, onOpen, onAdd }) {
         supabase.from('today_logs').select('profile_id').eq('log_date', today).eq('taken', true).in('profile_id', ids)
       ])
 
-      if(condsRes.error) console.error(condsRes.error.message)
-      if(medsRes.error) console.error(medsRes.error.message)
-
       const map = {}
       ids.forEach(id => {
         const conds = condsRes.data?.filter(c => c.profile_id === id) || []
         const meds = medsRes.data?.filter(m => m.profile_id === id) || []
+        
+        const doses = meds.reduce((n, m) => {
+          if (Array.isArray(m.times) && m.times.length > 0) return n + m.times.length
+          return n + 1
+        }, 0)
+
         map[id] = {
           condCount: conds.length,
           medCount: meds.length,
-          doses: meds.reduce((n, m) => n + (m.times?.length || 0), 0),
+          doses: doses,
           taken: logsRes.data?.filter(l => l.profile_id === id).length || 0
         }
       })
@@ -65,10 +71,15 @@ export default function Home({ profiles, onOpen, onAdd }) {
 
   const submit = async (e) => {
     e.preventDefault()
-    if (!f.name.trim()) return
-    await onAdd({ ...f, name: f.name.trim() })
-    setF({ name: '', age: '', blood: '', photo: '' })
-    setAdding(false)
+    if (!f.name.trim() || submitting) return
+    setSubmitting(true)
+    try {
+      await onAdd({ ...f, name: f.name.trim() })
+      setF({ name: '', age: '', blood: '', relation: '', photo: '' })
+      setAdding(false)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const sortedProfiles = [...(profiles || [])].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
@@ -98,7 +109,10 @@ export default function Home({ profiles, onOpen, onAdd }) {
                 <option value="">{t('family.bloodPlaceholder')}</option>
                 {BLOOD.map((b) => <option key={b}>{b}</option>)}
               </select>
-              <div className="sm:col-span-2"><button className={btnCls}>{t('family.create')}</button></div>
+              <input className={inputCls} placeholder="Relation (e.g. Father, Mother)" value={f.relation} onChange={(e) => setF({ ...f, relation: e.target.value })} />
+              <div className="sm:col-span-2">
+                <button disabled={submitting} className={btnCls}>{submitting ? 'Creating...' : t('family.create')}</button>
+              </div>
             </div>
           </form>
         </div>
@@ -108,8 +122,8 @@ export default function Home({ profiles, onOpen, onAdd }) {
         <ul className="grid gap-4 md:grid-cols-2">
           {sortedProfiles.map((p) => {
             const c = sbCounts[p.id]
-            const condCount = c?.condCount ?? p.diseases?.length ?? 0
-            const medCount = c?.medCount ?? p.medicines?.length ?? 0
+            const condCount = c?.condCount ?? 0
+            const medCount = c?.medCount ?? 0
             const doses = c?.doses ?? 0
             const taken = c?.taken ?? 0
             return (
@@ -118,11 +132,12 @@ export default function Home({ profiles, onOpen, onAdd }) {
                   <Avatar p={p} size="h-[90px] w-[90px]" text="text-2xl" />
                   <div className="flex min-w-0 flex-1 flex-col">
                     <h2 className="truncate font-serif text-xl font-semibold">{p.name}</h2>
+                    {p.relation && <p className="text-xs font-medium text-teal">{p.relation}</p>}
                     <p className="mt-1 text-sm text-ink/60">{p.age ? `${t('family.age')}: ${p.age}` : t('family.ageNotSet')}</p>
                     <p className="text-sm text-ink/60">{p.blood ? `${t('family.blood')}: ${p.blood}` : t('family.bloodNotSet')}</p>
                     <p className="mt-3 text-xs text-ink/60">
                       {condCount} {t('conditions.title').toLowerCase()}, {medCount} {t('medicines.title').toLowerCase()}
-                      {doses > 0 && <span className={taken >= doses ? 'text-teal' : 'text-amber'}>, {taken}/{doses} {t('today.taken').toLowerCase()}</span>}
+                      {doses > 0 && <span className={taken >= doses ? ' font-bold text-teal' : ' text-amber-600'}>, {taken}/{doses} {t('today.taken').toLowerCase()}</span>}
                     </p>
                     <div className="mt-auto flex justify-start pt-3">
                       <button onClick={() => onOpen(p.id)} className="rounded-lg border border-teal px-3 py-1 text-xs font-medium text-teal transition-colors hover:bg-teal hover:text-white">{t('family.viewDetails')}</button>

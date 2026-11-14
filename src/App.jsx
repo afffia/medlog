@@ -15,7 +15,7 @@ import Settings from './pages/Settings.jsx'
 import ReportDetail from './pages/ReportDetail.jsx'
 import Appointments from './pages/Appointments.jsx'
 import Folders from './pages/Folders.jsx'
-import Providers from './pages/Providers.jsx'
+import Providers from './pages/providers.jsx'
 import ProviderDetail from './pages/ProviderDetail.jsx'
 import { supabase } from './supabaseClient'
 import { useAuth } from './context/AuthContext'
@@ -40,7 +40,6 @@ function DetailWrapper() {
 
   const removeProfile = async () => {
     if (!confirm(t('family.deleteConfirm', { name: profile?.name }))) return
-    
     await supabase.from('appointments').delete().eq('profile_id', id)
     await supabase.from('today_logs').delete().eq('profile_id', id)
     await supabase.from('medicines').delete().eq('profile_id', id)
@@ -51,7 +50,6 @@ function DetailWrapper() {
 
   if (loading) return <div className="p-5">Loading...</div>
   if (!profile) return <div className="p-5">{t('family.notFound')}</div>
-
   return <Detail profile={profile} onBack={() => navigate('/family')} onRemove={removeProfile} />
 }
 

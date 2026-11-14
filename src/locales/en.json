@@ -11,7 +11,7 @@
     "settings": "Settings",
     "logout": "Log out",
     "folders": "Folders",
-    "providers": "Doctors",
+    "providers": "Provider",
     "appointments": "Appointments"
   },
   "auth": {
@@ -64,11 +64,37 @@
     "allPeople": "Everyone",
     "me": "Me"
   },
+  "medical_report": "Health State",
+  "health_state": "Health State",
+  "medical_examination": "Medical Examination",
+  "diagnostics": "Diagnostics",
+  "medication": "Medication",
+  "average": "Average",
+  "add": "+ Add",
+  "add_ecg": "+ ECG/XRay",
+  "add_report": "Add report",
+  "category": "Category",
+  "select_category": "Select category",
+  "doctor_name": "Doctor name",
+  "search_placeholder": "Search by specialist or doctor",
+  "fields": {
+    "systolic": "Systolic",
+    "diastolic": "Diastolic",
+    "heart_rate": "Heart Rate",
+    "body_temp": "Body Temp",
+    "blood_sugar": "Blood Sugar"
+  },
   "categories": {
     "bloodwork": "Bloodwork",
     "imaging": "Imaging",
     "prescription": "Prescription",
-    "visit": "Visit summary"
+    "visit": "Visit summary",
+    "cardiology": "Cardiology",
+    "neurology": "Neurology",
+    "endocrinology": "Endocrinology",
+    "pulmonology": "Pulmonology",
+    "orthopedics": "Orthopedics",
+    "ophthalmology": "Ophthalmology"
   },
   "upload": {
     "title": "Add a report",
@@ -362,7 +388,7 @@
     "folderEmpty": "No reports in this folder."
   },
   "providers": {
-    "title": "Doctors",
+    "title": "Provider",
     "subtitle": "Reports, medicines and vitals grouped by treating doctor.",
     "addPlaceholder": "Add a doctor's name",
     "empty": "No doctors yet. Add one above, or fill in the provider when you upload a report.",

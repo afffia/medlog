@@ -1,99 +1,152 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { Stethoscope, Plus } from 'lucide-react'
-import { supabase } from '../supabaseClient.js'
-import { useAuth } from '../context/AuthContext.jsx'
-import { inputCls, btnCls } from '../constants.js'
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { listReports, addReport, deleteReport, listReadings, addReading, listDiagnostics, addDiagnostic, listMedications, addMedication } from '../data';
+import { FIELDS, statusFor, isToday, SearchBar, FilterChips, ReportSection, AddReportModal, ClockIcon, CalendarIcon, PageHeader, WheelPicker, StatusChip, ExamSection, DiagnosticsCard, MedicationCard } from '../components/MedicalUI.jsx';
 
-const norm = (s) => (s || '').trim().toLowerCase()
+const go = (h) => { location.hash = h; };
+const asc = (a, b) => new Date(a.taken_at) - new Date(b.taken_at);
+const daysAgo = (d) => (Date.now() - new Date(d)) / 864e5;
 
-export default function Providers() {
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const { t } = useTranslation()
+function parseRoute(h) {
+  if (!h.startsWith('report-')) return null;
+  const rest = h.slice(7);
+  return rest.endsWith('-add') ? { id: rest.slice(0, -4), add: true } : { id: rest };
+}
 
-  const [reports, setReports] = useState([])
-  const [meds, setMeds] = useState([])
-  const [vitals, setVitals] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [name, setName] = useState('')
+function ReportsPage() {
+  const { t } = useTranslation();
+  const [reports, setReports] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [q, setQ] = useState('');
+  const [filter, setFilter] = useState('All');
+  const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    async function load() {
-      if (!user) return
-      const [r, m, v] = await Promise.all([
-        supabase.from('reports').select('id,provider').eq('user_id', user.id),
-        supabase.from('medicines').select('*').eq('user_id', user.id),
-        supabase.from('vitals').select('id,provider').eq('user_id', user.id),
-      ])
-      // m / v can fail before features_schema.sql is run; the list still works from reports
-      setReports(r.data || [])
-      setMeds(m.data || [])
-      setVitals(v.error ? [] : v.data || [])
-      setLoading(false)
+  const load = useCallback(async () => {
+    try { setReports(await listReports()); } catch (e) { setError(e.message); }
+    setLoading(false);
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const add = async (row) => { try { await addReport(row); await load(); return null; } catch (e) { return e.message; } };
+  
+  const onDelete = async (report) => {
+    try {
+      await deleteReport(report.id);
+      setReports((prev) => prev.filter((r) => r.id !== report.id));
+    } catch (e) {
+      alert(e.message || 'Delete failed');
     }
-    load()
-  }, [user])
+  };
 
-  const providers = useMemo(() => {
-    const map = new Map()
-    const touch = (raw, field) => {
-      const key = norm(raw)
-      if (!key) return
-      if (!map.has(key)) map.set(key, { key, name: raw.trim(), reports: 0, meds: 0, vitals: 0 })
-      map.get(key)[field] += 1
-    }
-    reports.forEach((r) => touch(r.provider, 'reports'))
-    meds.forEach((m) => touch(m.doctor, 'meds'))
-    vitals.forEach((v) => touch(v.provider, 'vitals'))
-    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name))
-  }, [reports, meds, vitals])
-
-  const openProvider = (n) => navigate(`/providers/${encodeURIComponent(n)}`)
-
-  function handleAdd(e) {
-    e.preventDefault()
-    if (name.trim()) openProvider(name.trim())
-  }
+  const specialists = useMemo(() => [...new Set(reports.map((r) => r.specialist))], [reports]);
+  const shown = reports.filter((r) => (filter === 'All' || r.specialist === filter) && (r.specialist + r.doctor).toLowerCase().includes(q.toLowerCase()));
 
   return (
-    <div className="w-full">
-      <header className="mb-6">
-        <h2 className="font-serif text-2xl">{t('providers.title')}</h2>
-        <p className="mt-1 text-sm text-ink/50">{t('providers.subtitle')}</p>
-      </header>
+    <main className="w-full bg-canvas px-6 pb-10 pt-8">
+      <div className="w-full">
+        <div className="flex w-full items-center justify-between gap-4">
+          <h1 className="font-serif text-[20px] font-semibold tracking-tight text-ink">{t('medical_report')}</h1>
+          <button onClick={() => setOpen(true)} className="rounded-full bg-teal px-4 py-2 text-[13px] font-medium text-white">{t('add_report')}</button>
+        </div>
+        <div className="mt-4 w-full"><SearchBar value={q} onChange={setQ} /></div>
+        <div className="mt-3 w-full"><FilterChips options={['All', ...specialists]} active={filter} onChange={setFilter} /></div>
+        <div className="mt-4 w-full">
+          {loading && <p className="px-4 py-10 text-center text-[13px] text-ink/60">{t('common.loading')}</p>}
+          {error && <p className="px-4 py-10 text-center text-[13px] text-coral">{error}</p>}
+          {!loading && !error && (
+            <>
+              <ReportSection title={t('timeline.filters.all') !== 'All' ? 'Recent - Last 30 Days' : 'Recent - Last 30 Days'} icon={ClockIcon} items={shown.filter((r) => daysAgo(r.report_date) <= 30)} onOpen={(r)=>go(`report-${r.id}`)} onDelete={onDelete} />
+              <div className="mt-6">
+                <ReportSection title="Last One Year" icon={CalendarIcon} items={shown.filter((r) => daysAgo(r.report_date) > 30)} onOpen={(r)=>go(`report-${r.id}`)} onDelete={onDelete} />
+              </div>
+              {!shown.length && <p className="px-4 py-10 text-center text-[13px] text-ink/60">{t('timeline.noReportsInCategory')}</p>}
+            </>
+          )}
+        </div>
+      </div>
+      <AddReportModal open={open} onClose={() => setOpen(false)} onSubmit={add} specialists={specialists} />
+    </main>
+  );
+}
 
-      <form onSubmit={handleAdd} className="mb-6 flex max-w-md gap-2">
-        <input className={inputCls} value={name} placeholder={t('providers.addPlaceholder')} onChange={(e) => setName(e.target.value)} />
-        <button type="submit" className={`${btnCls} flex shrink-0 items-center gap-1.5`}>
-          <Plus size={15} />{t('common.add')}
-        </button>
-      </form>
+function ReportPage({ id }) {
+  const { t } = useTranslation();
+  const [report, setReport] = useState(null);
+  const [readings, setReadings] = useState([]);
+  const [diag, setDiag] = useState([]);
+  const [meds, setMeds] = useState([]);
+  const load = useCallback(async () => {
+    const [rp, rd, dg, md] = await Promise.all([listReports(), listReadings(id), listDiagnostics(id), listMedications(id)]);
+    setReport(rp.find((r) => String(r.id) === id) || null);
+    setReadings(rd.map(r=>({ ...r, vals: [r.systolic, r.diastolic, r.heart_rate, r.body_temp, r.blood_sugar] })));
+    setDiag(dg); setMeds(md);
+  }, [id]);
+  useEffect(() => { load(); }, [load]);
 
-      {loading ? (
-        <p className="py-16 text-center text-sm text-ink/40">{t('common.loading')}</p>
-      ) : providers.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-line p-8 text-center text-sm text-ink/50">{t('providers.empty')}</p>
-      ) : (
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {providers.map((p) => (
-            <li key={p.key}>
-              <button type="button" onClick={() => openProvider(p.name)} className="flex w-full items-center gap-4 rounded-2xl border border-line bg-white p-4 text-left transition-colors hover:border-teal">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-light text-teal-dark">
-                  <Stethoscope size={22} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-serif text-lg font-semibold">{p.name}</span>
-                  <span className="block text-xs text-ink/60">
-                    {p.reports} {t('providers.reports').toLowerCase()} · {p.meds} {t('providers.medicines').toLowerCase()} · {p.vitals} {t('providers.vitals').toLowerCase()}
-                  </span>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
+  const handleDeleteReading = async () => {
+    // This is called from TodayAverage / BarChart if you wire delete all
+    // For single page, you can delete all today's readings here if needed
+  };
+
+  return (
+    <main className="w-full bg-canvas px-6 pb-16 pt-8">
+      <div className="w-full max-w-4xl">
+        <PageHeader title={report ? report.specialist : t('medical_report')} onBack={() => go('')} />
+        {report && (
+          <div className="mt-3 flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-canvas text-xl">{report.icon}</span>
+            <div><p className="text-[15px] font-semibold text-ink">{report.doctor}</p><p className="text-[12px] text-ink/60">{t(`categories.${report.specialist?.toLowerCase()}`) || report.specialist} {t('providers.title')}</p></div>
+          </div>
+        )}
+        <div className="mt-4"><ExamSection readings={readings.filter((r) => isToday(r.taken_at)).sort(asc)} onAdd={() => go(`report-${id}-add`)} onDelete={handleDeleteReading} /></div>
+        <div className="mt-6 flex w-full flex-col gap-6">
+          <DiagnosticsCard items={diag} onUpload={async (f) => { await addDiagnostic(id, f); await load(); }} onDelete={async (d) => { /* add deleteDiagnostic if you have */ await load(); }} />
+          <MedicationCard items={meds} onAdd={async (m) => { await addMedication({ report_id: id, ...m }); await load(); }} onDelete={async (m) => { /* add deleteMedication if you have */ await load(); }} />
+        </div>
+      </div>
+    </main>
+  );
+}
+
+const toLocalInput = (d) => new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+
+function AddReadingPage({ id }) {
+  const { t } = useTranslation();
+  const [vals, setVals] = useState(FIELDS.map((f) => f.def));
+  const [saving, setSaving] = useState(false);
+  const back = `report-${id}`;
+  const save = async () => {
+    setSaving(true);
+    try {
+      await addReading({ report_id: id, systolic: vals[0], diastolic: vals[1], heart_rate: vals[2], body_temp: vals[3], blood_sugar: vals[4], taken_at: new Date().toISOString() });
+      go(back);
+    } catch (e) { alert(e.message); setSaving(false); }
+  };
+  return (
+    <main className="w-full bg-canvas px-6 pb-10 pt-8">
+      <div className="max-w-xl">
+        <PageHeader title={t('providers.addReading')} onBack={() => go(back)} />
+        <div className="mt-3 rounded-xl border border-line bg-white p-3">
+          <div className="grid grid-cols-5 gap-1">
+            {FIELDS.map((f, i) => <WheelPicker key={f.name} field={f} value={vals[i]} onChange={(v) => setVals((a) => a.map((x, j) => (j === i ? v : x)))} />)}
+          </div>
+        </div>
+        <div className="mt-4"><StatusChip label={statusFor(vals)} /></div>
+        <button onClick={save} disabled={saving} className="mt-6 w-full rounded-full bg-teal py-3 text-[14px] font-medium text-white">{saving ? t('common.saving') : t('common.save')}</button>
+      </div>
+    </main>
+  );
+}
+
+export default function Providers() {
+  const [h, setH] = useState(() => location.hash.slice(1));
+  useEffect(() => {
+    const fn = () => { setH(location.hash.slice(1)); window.scrollTo(0, 0); };
+    window.addEventListener('hashchange', fn);
+    return () => window.removeEventListener('hashchange', fn);
+  }, []);
+  const r = parseRoute(h);
+  if (!r) return <ReportsPage />;
+  return r.add ? <AddReadingPage key={h} id={r.id} /> : <ReportPage key={h} id={r.id} />;
 }

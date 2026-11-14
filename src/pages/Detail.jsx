@@ -16,10 +16,10 @@ export default function Detail({ profile: initialProfile, onBack, onRemove }) {
   const [todayLogs, setTodayLogs] = useState([])
   const [loading, setLoading] = useState(true)
 
-  // FIX: sob data Supabase theke ek jaygay
   const loadDetailData = useCallback(async () => {
     if (!initialProfile?.id) return
     setLoading(true)
+  
     const today = todayKey()
     
     const [profileRes, condRes, medRes, logsRes] = await Promise.all([
@@ -51,14 +51,17 @@ export default function Detail({ profile: initialProfile, onBack, onRemove }) {
     window.dispatchEvent(new Event('today-logs-updated'))
   }, [loadDetailData])
 
-  // The parent (DetailWrapper) asks for confirmation and does the deleting
   const handleDeleteProfile = () => onRemove()
 
   if (loading) {
     return <div className="text-center py-16 text-sm text-ink/40">{t('timeline.loading')}</div>
   }
 
-  const totalDoses = medicines.reduce((n,m)=>n+(m.times?.length||0),0)
+  // FIX: doses calculation - times khali thakleo 1 dhore nibe
+  const totalDoses = medicines.reduce((n, m) => {
+    if (Array.isArray(m.times) && m.times.length > 0) return n + m.times.length
+    return n + 1
+  }, 0)
 
   return (
     <div className="w-full">
@@ -80,8 +83,11 @@ export default function Detail({ profile: initialProfile, onBack, onRemove }) {
               {profile.age ? `${t('family.age')}: ${profile.age}` : ''}
               {profile.blood ? `, ${t('family.bloodGroup')}: ${profile.blood}` : ''}
             </p>
-            <p className="mt-1 text-xs text-ink/50">
-              {conditions.length} {t('conditions.title').toLowerCase()}, {medicines.length} {t('medicines.title').toLowerCase()}, {todayLogs.length}/{totalDoses} {t('today.taken').toLowerCase()}
+            <p className="mt-1 text-xs font-medium">
+              {conditions.length} {t('conditions.title').toLowerCase()}, {medicines.length} {t('medicines.title').toLowerCase()}, 
+              <span className={todayLogs.length >= totalDoses && totalDoses > 0 ? ' text-teal' : ' text-amber-600'}>
+                {" "}{todayLogs.length}/{totalDoses} {t('today.taken').toLowerCase()}
+              </span>
             </p>
           </div>
         </div>
