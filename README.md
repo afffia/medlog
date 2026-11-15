@@ -12,4 +12,4 @@ Setup
 To replicate this backend locally or in a new Supabase project:
 1. Create a new project in [Supabase](https://supabase.com).
 2. Run the SQL files in this directory inside the Supabase SQL Editor to create the tables and RLS policies.
-3. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to the root `.env` file (change `.env_example` to '.env').
+3. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to the root `.env` file (change `.env_example`).
