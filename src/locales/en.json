@@ -29,7 +29,19 @@
     "confirmEmailNotice": "Check your email to confirm your account, then log in.",
     "passwordMismatch": "Passwords don't match",
     "passwordTooShort": "Password must be at least 6 characters",
-    "tooManyAttempts": "Too many attempts. Please try again in {{seconds}} seconds."
+    "tooManyAttempts": "Too many attempts. Please try again in {{seconds}} seconds.",
+    "forgotPassword": "Forgot password?",
+    "resetPasswordHelp": "Enter the email address linked to your account. We’ll send you a password reset link.",
+    "sendResetEmail": "Send reset link",
+    "sendingResetEmail": "Sending...",
+    "resetEmailSent": "If an account exists for this email, a password reset link has been sent. Please check your inbox.",
+    "backToLogin": "Back to login",
+    "setNewPassword": "Set a new password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "updatePassword": "Update password",
+    "updatingPassword": "Updating...",
+    "passwordResetSuccess": "Your password has been updated. Redirecting to login..."
   },
   "timeline": {
     "title": "Your timeline",
