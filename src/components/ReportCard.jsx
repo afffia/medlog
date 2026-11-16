@@ -1,4 +1,4 @@
-import { Scan, Pill, Stethoscope, Droplet } from 'lucide-react'
+import { Scan, Pill, Stethoscope, Droplet, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { CATEGORIES } from '../mockData.js'
 
@@ -23,7 +23,15 @@ const FOLDER_COLORS_PREVIEW = {
   purple: 'bg-purple-100 text-purple-600',
 }
 
-export default function ReportCard({ report = {}, onOpen, onEdit, onDelete }) {
+export default function ReportCard({
+  report = {},
+  onOpen,
+  onEdit,
+  onDelete,
+  selectable = false,
+  selected = false,
+  onToggle,
+}) {
   const { t, i18n } = useTranslation()
   
   const meta = CATEGORIES?.[report.category]
@@ -62,6 +70,10 @@ export default function ReportCard({ report = {}, onOpen, onEdit, onDelete }) {
         : 'bg-teal-light text-teal-dark'
 
   function handleCardClick() {
+    if (selectable) {
+      if (typeof onToggle === 'function') onToggle(report)
+      return
+    }
     if (typeof onOpen === 'function') onOpen(report)
   }
 
@@ -84,27 +96,29 @@ export default function ReportCard({ report = {}, onOpen, onEdit, onDelete }) {
 
   return (
     <div
-      role="button"
+      role={selectable ? 'checkbox' : 'button'}
+      aria-checked={selectable ? selected : undefined}
       tabIndex={0}
       onClick={handleCardClick}
       onKeyDown={handleCardKeyDown}
       aria-label={`${t('reportCard.open')} ${report.title || t('reportCard.untitled')}`}
-      className="
-        bg-white border border-line rounded-[14px]
+      className={`
+        bg-white border rounded-[14px]
         p-3.5 w-full cursor-pointer
+        ${selectable && selected ? 'border-teal ring-2 ring-teal/40' : 'border-line'}
         hover:border-teal
         active:scale-[0.99]
         transition-all duration-150
         focus:outline-none
         focus:ring-2 focus:ring-teal/40
-      "
+      `}
     >
       <div className="flex items-center gap-3">
         <div className={`w-[42px] h-[42px] rounded-xl shrink-0 flex items-center justify-center ${iconColorClass}`}>
           <Icon size={20} />
         </div>
 
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold text-ink leading-tight truncate">
             {report.title || t('reportCard.untitled')}
           </h3>
@@ -119,6 +133,16 @@ export default function ReportCard({ report = {}, onOpen, onEdit, onDelete }) {
             </p>
           )}
         </div>
+
+        {selectable && (
+          <div
+            className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center border transition-colors ${
+              selected ? 'bg-teal border-teal text-white' : 'border-line text-transparent'
+            }`}
+          >
+            <Check size={14} />
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-3 mt-3 text-xs">
@@ -126,6 +150,7 @@ export default function ReportCard({ report = {}, onOpen, onEdit, onDelete }) {
           {filesCount} {filesCount === 1 ? t('common.file') : t('common.files')}
         </span>
 
+        {!selectable && (<>
         <button
           type="button"
           onClick={handleEditClick}
@@ -141,6 +166,7 @@ export default function ReportCard({ report = {}, onOpen, onEdit, onDelete }) {
         >
           {t('common.remove')}
         </button>
+        </>)}
       </div>
     </div>
   )
